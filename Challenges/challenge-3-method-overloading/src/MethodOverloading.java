@@ -30,7 +30,7 @@ public class MethodOverloading {
             System.out.println("Invalid inches parameter");
             return -1;
         }
-        double feet = (int) inches / 12;
+        double feet = (int) (inches / 12);
         double remainingInches = (int) inches % 12;
         System.out.println(inches + " inches = " + feet + " feet and " + remainingInches + " inches");
         return calculateFeetAndInchesToCentimeters(feet, remainingInches);
