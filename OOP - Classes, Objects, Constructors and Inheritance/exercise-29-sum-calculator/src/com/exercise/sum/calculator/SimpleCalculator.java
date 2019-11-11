@@ -1,3 +1,5 @@
+package com.exercise.sum.calculator;
+
 public class SimpleCalculator {
 
     private double firstNumber;
