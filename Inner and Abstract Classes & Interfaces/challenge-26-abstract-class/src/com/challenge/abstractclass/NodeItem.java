@@ -1,8 +1,8 @@
 package com.challenge.abstractclass;
 
-public class NodeItemList extends Node {
+public class NodeItem extends Node {
 
-    public NodeItemList(Object data) {
+    public NodeItem(Object data) {
         super(data);
     }
 

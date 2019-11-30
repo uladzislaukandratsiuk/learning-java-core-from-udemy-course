@@ -1,10 +1,10 @@
 package com.challenge.abstractclass;
 
-public class MyLinkedItemList implements NodeList {
+public class MyLinkedItem implements NodeList {
 
-    private Node head = null;
+    private Node head;
 
-    public MyLinkedItemList(Node head) {
+    public MyLinkedItem(Node head) {
         this.head = head;
     }
 
@@ -15,7 +15,7 @@ public class MyLinkedItemList implements NodeList {
 
     @Override
     public boolean addItem(Node newItem) {
-        if(this.head == null) {
+        if (this.head == null) {
             // The list was empty, so this item becomes the head of the list
             this.head = newItem;
             return true;
@@ -24,7 +24,7 @@ public class MyLinkedItemList implements NodeList {
         Node currentItem = this.head;
         while (currentItem != null) {
             int comparison = (currentItem.compareTo(newItem));
-            if (comparison <0) {
+            if (comparison < 0) {
                 // newItem is greater, move right if possible
                 if (currentItem.nextItem() != null) {
                     currentItem = currentItem.nextItem();
@@ -56,12 +56,40 @@ public class MyLinkedItemList implements NodeList {
 
     @Override
     public boolean removeItem(Node item) {
+        if (item != null) {
+            System.out.println("Deleting item " + item.getData());
+        }
+
+        Node currentItem = this.head;
+        while (currentItem != null) {
+            int comparison = currentItem.compareTo(item);
+            if (comparison == 0) {
+                // found the item to delete
+                if (currentItem == this.head) {
+                    this.head = currentItem.nextItem();
+                } else {
+                    currentItem.previousItem().setNextItem(currentItem.nextItem());
+                    if (currentItem.nextItem() != null) {
+                        currentItem.nextItem().setPreviousItem(currentItem.previousItem());
+                    }
+                }
+                return true;
+            } else if (comparison < 0) {
+                currentItem = currentItem.nextItem();
+            } else { // comparison > 0
+                // We are at an item greater than the one to be deleted
+                // so the item is not in the list
+                return false;
+            }
+        }
+        // We have reached the end of the list
+        // Without finding the item to delete
         return false;
     }
 
     @Override
     public void traverse(Node head) {
-        if(head == null) {
+        if (head == null) {
             System.out.println("The list is empty");
         } else {
             while (head != null) {

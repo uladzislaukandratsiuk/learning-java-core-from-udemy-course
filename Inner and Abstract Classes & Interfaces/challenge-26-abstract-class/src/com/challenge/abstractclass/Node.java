@@ -1,18 +1,29 @@
 package com.challenge.abstractclass;
 
-import org.w3c.dom.NodeList;
+public abstract class Node {
 
-public interface NodeItem {
+    protected Object data;
+    protected Node next;
+    protected Node previous;
 
-    NodeList nextItem();
+    public Node(Object data) {
+        this.data = data;
+        this.next = null;
+        this.previous = null;
+    }
 
-    NodeList setNextItem(NodeList item);
+    abstract Node nextItem();
 
-    NodeList previousItem();
+    abstract Node setNextItem(Node item);
 
-    NodeList setPreviousItem(NodeList item);
+    abstract Node previousItem();
 
-    int compareTo(NodeList item);
+    abstract Node setPreviousItem(Node item);
 
+    abstract int compareTo(Node item);
+
+    public Object getData() {
+        return data;
+    }
 }
 
