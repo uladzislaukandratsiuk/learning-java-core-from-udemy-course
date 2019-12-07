@@ -8,13 +8,17 @@ public abstract class HeavenlyBody {
     private final String name;
     private final double orbitalPeriod;
     private final Set<HeavenlyBody> satellites;
-    private final String bodyType;
+    private final BodyTypes bodyType;
 
-    public HeavenlyBody(String name, double orbitalPeriod) {
+    public enum BodyTypes {
+        PLANET, MOON
+    }
+
+    public HeavenlyBody(String name, double orbitalPeriod, BodyTypes bodyType) {
         this.name = name;
         this.orbitalPeriod = orbitalPeriod;
         this.satellites = new HashSet<>();
-        this.bodyType = getClass().getSimpleName();
+        this.bodyType = bodyType;
     }
 
     public String getName() {
@@ -25,12 +29,12 @@ public abstract class HeavenlyBody {
         return orbitalPeriod;
     }
 
-    public String getBodyType() {
+    public BodyTypes getBodyType() {
         return bodyType;
     }
 
-    public boolean addMoon(HeavenlyBody moon) {
-        return this.satellites.add(moon);
+    public boolean addSatellite(HeavenlyBody satellite) {
+        return this.satellites.add(satellite);
     }
 
     public Set<HeavenlyBody> getSatellites() {
@@ -38,22 +42,27 @@ public abstract class HeavenlyBody {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public final boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
 
-        if (obj instanceof HeavenlyBody) {
+        if(obj instanceof HeavenlyBody) {
             HeavenlyBody theObject = (HeavenlyBody) obj;
-            if (this.name.equals(theObject.getName())) {
-                return this.bodyType.equals(theObject.getBodyType());
+            if(this.name.equals(theObject.getName())) {
+                return this.bodyType == theObject.getBodyType();
             }
         }
         return false;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return this.name.hashCode() + 57 + this.bodyType.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return this.bodyType + ": " + this.name + ", " + this.orbitalPeriod;
     }
 }
