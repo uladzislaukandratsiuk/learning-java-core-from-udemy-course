@@ -22,6 +22,26 @@ public class Basket {
         return 0;
     }
 
+    public int removeFromBasket(StockItem item, int quantity) {
+        if ((item != null) && (quantity > 0)) {
+            int inBasket = list.getOrDefault(item, 0);
+            int inBasketQuantity = inBasket - quantity;
+
+            if (inBasketQuantity > 0) {
+                list.put(item, inBasketQuantity);
+                return quantity;
+            } else if (inBasketQuantity == 0) {
+                list.remove(item);
+                return quantity;
+            }
+        }
+        return 0;
+    }
+
+    public void clearBasket() {
+        this.list.clear();
+    }
+
     public Map<StockItem, Integer> Items() {
         return Collections.unmodifiableMap(list);
     }
@@ -35,6 +55,6 @@ public class Basket {
             s.append(item.getKey()).append(". ").append(item.getValue()).append(" purchased\n");
             totalCost += item.getKey().getPrice() * item.getValue();
         }
-        return s + "Total cost " + totalCost;
+        return s + "Total cost " + String.format("%.2f", totalCost);
     }
 }

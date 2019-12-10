@@ -6,12 +6,6 @@ public class StockItem implements Comparable<StockItem> {
     private int quantityInStock;
     private int reserved = 0;
 
-    public StockItem(String name, double price) {
-        this.name = name;
-        this.price = price;
-        this.quantityInStock = 0;
-    }
-
     public StockItem(String name, double price, int quantityInStock) {
         this.name = name;
         this.price = price;
@@ -26,18 +20,8 @@ public class StockItem implements Comparable<StockItem> {
         return price;
     }
 
-    public int getReserved() {
-        return reserved;
-    }
-
-    public int quantityInStock() {
-        return this.quantityInStock;
-    }
-
-    public void setPrice(double price) {
-        if(price > 0.0) {
-            this.price = price;
-        }
+    public int availableQuantity() {
+        return this.quantityInStock - this.reserved;
     }
 
     public int reserveStock(int quantity) {
@@ -58,18 +42,18 @@ public class StockItem implements Comparable<StockItem> {
 
     public void adjustStock(int quantity) {
         int newQuantity = this.quantityInStock + quantity;
-        if(newQuantity >=0) {
+        if (newQuantity >= 0) {
             this.quantityInStock = newQuantity;
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
 
-        if((obj == null) || (obj.getClass() != this.getClass())) {
+        if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
 
@@ -84,11 +68,11 @@ public class StockItem implements Comparable<StockItem> {
 
     @Override
     public int compareTo(StockItem item) {
-        if(this == item) {
+        if (this == item) {
             return 0;
         }
 
-        if(item != null) {
+        if (item != null) {
             return this.name.compareTo(item.getName());
         }
 
@@ -97,6 +81,6 @@ public class StockItem implements Comparable<StockItem> {
 
     @Override
     public String toString() {
-        return this.name + ": reserved: " + this.reserved + " price: " + this.price;
+        return this.name + " price: " + this.price + " reserved: " + this.reserved ;
     }
 }
