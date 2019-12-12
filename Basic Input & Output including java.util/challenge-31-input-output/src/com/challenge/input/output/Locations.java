@@ -1,5 +1,8 @@
 package com.challenge.input.output;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +11,26 @@ import java.util.Set;
 public class Locations implements Map<Integer, Location> {
 
     public static Map<Integer, Location> locations = new HashMap<>();
+
+    public static void main(String[] args) {
+        FileWriter locationsFile = null;
+        try {
+            locationsFile = new FileWriter("locations.txt");
+            for (Location location : locations.values()) {
+                locationsFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (locationsFile != null) {
+                    locationsFile.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     static {
         locations.put(0, new Location(0,
