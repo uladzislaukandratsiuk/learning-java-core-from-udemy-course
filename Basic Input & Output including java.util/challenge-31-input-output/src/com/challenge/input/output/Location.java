@@ -1,6 +1,7 @@
 package com.challenge.input.output;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Location {
@@ -12,7 +13,7 @@ public class Location {
     public Location(int locationID, String description, Map<String, Integer> exits) {
         this.locationID = locationID;
         this.description = description;
-        this.exits = exits != null ? new HashMap<>(exits) : new HashMap<>();
+        this.exits = exits != null ? new LinkedHashMap<>(exits) : new LinkedHashMap<>();
         this.exits.put("Q", 0);
     }
 
