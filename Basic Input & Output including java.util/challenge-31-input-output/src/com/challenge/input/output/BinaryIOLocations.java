@@ -3,13 +3,15 @@ package com.challenge.input.output;
 import java.io.*;
 import java.util.*;
 
-public class BinaryLocations implements Map<Integer, Location> {
+public class BinaryIOLocations implements Map<Integer, Location> {
+
+    private static final String FILE_PATH = "Basic Input & Output including java.util/locations.dat";
 
     public static Map<Integer, Location> locations = new LinkedHashMap<>();
 
     public static void main(String[] args) throws IOException {
         try (DataOutputStream locationsFile =
-                     new DataOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
+                     new DataOutputStream(new BufferedOutputStream(new FileOutputStream(FILE_PATH)))) {
             for (Location location : locations.values()) {
                 locationsFile.writeInt(location.getLocationID());
                 locationsFile.writeUTF(location.getDescription());
@@ -29,7 +31,7 @@ public class BinaryLocations implements Map<Integer, Location> {
 
     static {
         try (DataInputStream locationsFile =
-                     new DataInputStream(new BufferedInputStream(new FileInputStream("locations.dat")))) {
+                     new DataInputStream(new BufferedInputStream(new FileInputStream(FILE_PATH)))) {
             boolean eof = false;
             while (!eof) {
                 try {

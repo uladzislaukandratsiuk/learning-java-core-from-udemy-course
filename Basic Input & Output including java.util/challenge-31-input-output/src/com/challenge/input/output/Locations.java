@@ -5,11 +5,16 @@ import java.util.*;
 
 public class Locations implements Map<Integer, Location> {
 
+    private static final String LOCATIONS_PATH = "Basic Input & Output including java.util/locations.txt";
+    private static final String DIRECTIONS_PATH = "Basic Input & Output including java.util/directions.txt";
+    private static final String BIG_LOCATIONS_PATH = "Basic Input & Output including java.util/locations_big.txt";
+    private static final String BIG_DIRECTIONS_PATH = "Basic Input & Output including java.util/directions_big.txt";
+
     public static Map<Integer, Location> locations = new LinkedHashMap<>();
 
     public static void main(String[] args) throws IOException {
-        try (BufferedWriter locationsFile = new BufferedWriter(new FileWriter("locations.txt"));
-             BufferedWriter directionsFile = new BufferedWriter(new FileWriter("directions.txt"))) {
+        try (BufferedWriter locationsFile = new BufferedWriter(new FileWriter(LOCATIONS_PATH));
+             BufferedWriter directionsFile = new BufferedWriter(new FileWriter(DIRECTIONS_PATH))) {
             for (Location location : locations.values()) {
                 locationsFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
                 for (String direction : location.getExits().keySet()) {
@@ -23,7 +28,7 @@ public class Locations implements Map<Integer, Location> {
     }
 
     static {
-        try (BufferedReader locationsFile = new BufferedReader(new FileReader("locations_big.txt"))) {
+        try (BufferedReader locationsFile = new BufferedReader(new FileReader(BIG_LOCATIONS_PATH))) {
             String input;
             while ((input = locationsFile.readLine()) != null) {
                 String[] data = input.split(",");
@@ -37,7 +42,7 @@ public class Locations implements Map<Integer, Location> {
             e.printStackTrace();
         }
 
-        try (BufferedReader directionsFile = new BufferedReader(new FileReader("directions_big.txt"))) {
+        try (BufferedReader directionsFile = new BufferedReader(new FileReader(BIG_DIRECTIONS_PATH))) {
             String input;
             while ((input = directionsFile.readLine()) != null) {
                 String[] data = input.split(",");
