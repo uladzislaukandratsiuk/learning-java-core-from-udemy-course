@@ -8,11 +8,11 @@ import java.util.Set;
 
 public class RandomIOLocations implements Map<Integer, Location> {
 
-    private static final String FILE_PATH = "Basic Input & Output including java.util/locations.dat";
     private static final String FILE_RAF_PATH = "Basic Input & Output including java.util/locations_raf.dat";
 
     public static Map<Integer, Location> locations = new LinkedHashMap<>();
     private static Map<Integer, IndexRecord> index = new LinkedHashMap<>();
+    private static RandomAccessFile accessFile;
 
     public static void main(String[] args) throws IOException {
 
@@ -27,12 +27,12 @@ public class RandomIOLocations implements Map<Integer, Location> {
             int startPointer = locationStart;
             rao.seek(startPointer);
 
-            for(Location location : locations.values()) {
+            for (Location location : locations.values()) {
                 rao.writeInt(location.getLocationID());
                 rao.writeUTF(location.getDescription());
                 StringBuilder builder = new StringBuilder();
-                for(String direction : location.getExits().keySet()) {
-                    if(!direction.equalsIgnoreCase("Q")) {
+                for (String direction : location.getExits().keySet()) {
+                    if (!direction.equalsIgnoreCase("Q")) {
                         builder.append(direction);
                         builder.append(",");
                         builder.append(location.getExits().get(direction));
@@ -48,7 +48,7 @@ public class RandomIOLocations implements Map<Integer, Location> {
             }
 
             rao.seek(indexStart);
-            for(Integer locationID : index.keySet()) {
+            for (Integer locationID : index.keySet()) {
                 rao.writeInt(locationID);
                 rao.writeInt(index.get(locationID).getStartByte());
                 rao.writeInt(index.get(locationID).getLength());
@@ -57,27 +57,48 @@ public class RandomIOLocations implements Map<Integer, Location> {
     }
 
     static {
-        try(ObjectInputStream locFile =
-                    new ObjectInputStream(new BufferedInputStream(new FileInputStream(FILE_PATH)))) {
-            boolean eof = false;
-            while (!eof) {
-                try {
-                    Location location = (Location) locFile.readObject();
-                    System.out.println("Read location " + location.getLocationID() + " : " + location.getDescription());
-                    System.out.println("Found " + location.getExits().size() + " exits");
 
-                    locations.put(location.getLocationID(), location);
-                } catch (EOFException e) {
-                    eof = true;
-                }
+        try {
+            accessFile = new RandomAccessFile(FILE_RAF_PATH, "rwd");
+            int numLocations = accessFile.readInt();
+            long locationStartPoint = accessFile.readInt();
+
+            while (accessFile.getFilePointer() < locationStartPoint) {
+                int locationId = accessFile.readInt();
+                int locationStart = accessFile.readInt();
+                int locationLength = accessFile.readInt();
+
+                IndexRecord record = new IndexRecord(locationStart, locationLength);
+                index.put(locationId, record);
             }
-        } catch(InvalidClassException e) {
-            System.out.println("InvalidClassException " + e.getMessage());
-        } catch(IOException io) {
-            System.out.println("IO Exception " + io.getMessage());
-        } catch(ClassNotFoundException e) {
-            System.out.println("ClassNotFoundException " + e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("IOException in static initializer: " + e.getMessage());
         }
+    }
+
+    public Location getLocation(int locationId) throws IOException {
+
+        IndexRecord record = index.get(locationId);
+        accessFile.seek(record.getStartByte());
+        int id = accessFile.readInt();
+        String description = accessFile.readUTF();
+        String exits = accessFile.readUTF();
+        String[] exitPart = exits.split(",");
+
+        Location location = new Location(locationId, description, null);
+
+        if(locationId != 0) {
+            for(int i=0; i<exitPart.length; i++) {
+                System.out.println("exitPart = " + exitPart[i]);
+                System.out.println("exitPart[+1] = " + exitPart[i+1]);
+                String direction = exitPart[i];
+                int destination = Integer.parseInt(exitPart[++i]);
+                location.addExit(direction, destination);
+            }
+        }
+
+        return location;
     }
 
     @Override
@@ -138,5 +159,9 @@ public class RandomIOLocations implements Map<Integer, Location> {
     @Override
     public Set<Map.Entry<Integer, Location>> entrySet() {
         return locations.entrySet();
+    }
+
+    public void close() throws IOException {
+        accessFile.close();
     }
 }
