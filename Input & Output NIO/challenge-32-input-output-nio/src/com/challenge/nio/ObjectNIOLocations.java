@@ -8,10 +8,7 @@ import java.util.*;
 
 public class ObjectNIOLocations implements Map<Integer, Location> {
 
-    private static final String BIG_LOCATIONS_PATH = "Input & Output NIO/locations_big.txt";
-    private static final String BIG_DIRECTIONS_PATH = "Input & Output NIO/directions_big.txt";
     private static final String OBJECT_LOCATIONS_PATH = "Input & Output NIO/locations.dat";
-
 
     public static Map<Integer, Location> locations = new LinkedHashMap<>();
 
@@ -26,38 +23,23 @@ public class ObjectNIOLocations implements Map<Integer, Location> {
     }
 
     static {
-        Path locPath = FileSystems.getDefault().getPath(BIG_LOCATIONS_PATH);
-        Path dirPath = FileSystems.getDefault().getPath(BIG_DIRECTIONS_PATH);
-
-        try (Scanner scanner = new Scanner(Files.newBufferedReader(locPath))) {
-            scanner.useDelimiter(",");
-            while (scanner.hasNextLine()) {
-                int loc = scanner.nextInt();
-                scanner.skip(scanner.delimiter());
-                String description = scanner.nextLine();
-                System.out.println("Imported loc: " + loc + ": " + description);
-                locations.put(loc, new Location(loc, description, null));
+        Path locPath = FileSystems.getDefault().getPath(OBJECT_LOCATIONS_PATH);
+        try (ObjectInputStream locFile = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(locPath)))) {
+            boolean eof = false;
+            while(!eof) {
+                try {
+                    Location location = (Location) locFile.readObject();
+                    locations.put(location.getLocationID(), location);
+                } catch(EOFException e) {
+                    eof = true;
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (BufferedReader dirFile = Files.newBufferedReader(dirPath)) {
-            String input;
-
-            while ((input = dirFile.readLine()) != null) {
-                String[] data = input.split(",");
-                int loc = Integer.parseInt(data[0]);
-                String direction = data[1];
-                int destination = Integer.parseInt(data[2]);
-                System.out.println(loc + ": " + direction + ": " + destination);
-                Location location = locations.get(loc);
-                location.addExit(direction, destination);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
+        } catch(InvalidClassException e) {
+            System.out.println("InvalidClassException " + e.getMessage());
+        } catch(IOException e) {
+            System.out.println("IOException " + e.getMessage());
+        } catch(ClassNotFoundException e) {
+            System.out.println("ClassNotFoundException " + e.getMessage());
         }
     }
 
