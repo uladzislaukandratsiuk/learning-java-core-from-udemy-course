@@ -22,10 +22,10 @@ class Countdown {
 
     private int i;
 
-    public synchronized void doCountdown() {
+    public void doCountdown() {
         String color;
 
-        switch(Thread.currentThread().getName()) {
+        switch (Thread.currentThread().getName()) {
             case "Thread 1":
                 color = ThreadColor.ANSI_GREEN;
                 break;
@@ -36,8 +36,10 @@ class Countdown {
                 color = ThreadColor.ANSI_RED;
         }
 
-        for(i = 0; i < 6; i++) {
-            System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
+        synchronized (this) {
+            for (i = 0; i < 6; i++) {
+                System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
+            }
         }
     }
 }
