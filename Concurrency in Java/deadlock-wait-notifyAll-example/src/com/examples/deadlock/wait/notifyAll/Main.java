@@ -17,18 +17,28 @@ class Message {
 
     public synchronized String read() {
         while (empty) {
-
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         empty = true;
+        notifyAll();
         return message;
     }
 
     public synchronized void write(String message) {
         while (!empty) {
-
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         empty = false;
         this.message = message;
+        notifyAll();
     }
 }
 
@@ -69,9 +79,15 @@ class MyReader implements Runnable {
     }
 
     public void run() {
+        Random random = new Random();
         for (String latestMessage = message.read(); !latestMessage.equals("Finished");
              latestMessage = message.read()) {
             System.out.println(latestMessage);
+            try {
+                Thread.sleep(random.nextInt(2000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
