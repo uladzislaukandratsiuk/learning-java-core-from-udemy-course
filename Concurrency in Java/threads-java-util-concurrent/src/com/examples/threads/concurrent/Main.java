@@ -5,8 +5,7 @@ import com.examples.threads.ThreadColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.examples.threads.concurrent.Main.EOF;
@@ -26,6 +25,17 @@ public class Main {
         executor.execute(producer);
         executor.execute(consumer1);
         executor.execute(consumer2);
+
+        Future<String> future = executor.submit(() -> {
+            System.out.println(ThreadColor.ANSI_CYAN + "Callable class output");
+            return ThreadColor.ANSI_PURPLE + "This is Callable class, call() method result";
+        });
+
+        try {
+            System.out.println(future.get());
+        } catch (ExecutionException | InterruptedException e) {
+            System.out.println("Something went wrong");
+        }
 
         executor.shutdown();
     }
