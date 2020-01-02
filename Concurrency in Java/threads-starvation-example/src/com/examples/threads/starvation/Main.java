@@ -2,9 +2,11 @@ package com.examples.threads.starvation;
 
 import com.examples.threads.ThreadColor;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Main {
 
-    private static final Object lock = new Object();
+    private static ReentrantLock reentrantLock = new ReentrantLock(true);
 
     public static void main(String[] args) {
         Thread firstThread = new Thread(new Runner(ThreadColor.ANSI_PURPLE), "Thread priority 10");
@@ -17,10 +19,10 @@ public class Main {
         thirdThread.setPriority(4);
         fourthThread.setPriority(1);
 
-        firstThread.start();
         secondThread.start();
-        thirdThread.start();
         fourthThread.start();
+        firstThread.start();
+        thirdThread.start();
     }
 
     private static class Runner implements Runnable {
@@ -33,9 +35,12 @@ public class Main {
 
         @Override
         public void run() {
-            synchronized (lock) {
-                for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++) {
+                reentrantLock.lock();
+                try {
                     System.out.format(color + "%s: runCount = %d\n", Thread.currentThread().getName(), runCount++);
+                } finally {
+                    reentrantLock.unlock();
                 }
             }
         }
