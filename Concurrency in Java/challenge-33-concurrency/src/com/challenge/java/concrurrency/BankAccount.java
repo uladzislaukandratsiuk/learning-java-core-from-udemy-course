@@ -1,5 +1,6 @@
 package com.challenge.java.concrurrency;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,21 +26,35 @@ class BankAccount {
     }
 
     public synchronized void deposit(double amount) {
-        lock.lock();
         try {
-            balance += amount;
-        } finally {
-            lock.unlock();
+            if (lock.tryLock(1000, TimeUnit.MILLISECONDS)) {
+                try {
+                    balance += amount;
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                System.out.println("Could not get lock");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         showBalance();
     }
 
     public void withdraw(double amount) {
-        lock.lock();
         try {
-            balance -= amount;
-        } finally {
-            lock.unlock();
+            if (lock.tryLock(1000, TimeUnit.MILLISECONDS)) {
+                try {
+                    balance -= amount;
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                System.out.println("Could not get lock");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         showBalance();
     }
