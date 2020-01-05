@@ -18,13 +18,17 @@ class BankAccount {
         return balance;
     }
 
-    public void deposit(double amount) {
-        balance += amount;
+    public synchronized void deposit(double amount) {
+        synchronized (this) {
+            balance += amount;
+        }
         showBalance();
     }
 
     public void withdraw(double amount) {
-        balance -= amount;
+        synchronized (this) {
+            balance -= amount;
+        }
         showBalance();
     }
 
