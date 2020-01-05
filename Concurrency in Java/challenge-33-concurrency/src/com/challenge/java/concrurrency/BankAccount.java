@@ -1,13 +1,19 @@
 package com.challenge.java.concrurrency;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 class BankAccount {
 
     private double balance;
     private String accountNumber;
 
+    private Lock lock;
+
     public BankAccount(String accountNumber, double initialBalance) {
         this.accountNumber = accountNumber;
         this.balance = initialBalance;
+        this.lock = new ReentrantLock();
     }
 
     public String getAccountNumber() {
@@ -19,15 +25,21 @@ class BankAccount {
     }
 
     public synchronized void deposit(double amount) {
-        synchronized (this) {
+        lock.lock();
+        try {
             balance += amount;
+        } finally {
+            lock.unlock();
         }
         showBalance();
     }
 
     public void withdraw(double amount) {
-        synchronized (this) {
+        lock.lock();
+        try {
             balance -= amount;
+        } finally {
+            lock.unlock();
         }
         showBalance();
     }
@@ -39,7 +51,7 @@ class BankAccount {
     @Override
     public String toString() {
         return "BankAccount:" +
-                "accountNumber='" + accountNumber +
+                "{accountNumber='" + accountNumber +
                 "', balance=" + balance + '}';
     }
 }
