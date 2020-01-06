@@ -25,7 +25,7 @@ class BankAccount {
         return balance;
     }
 
-    public synchronized void deposit(double amount) {
+    public void deposit(double amount) {
         try {
             if (lock.tryLock(1000, TimeUnit.MILLISECONDS)) {
                 try {
