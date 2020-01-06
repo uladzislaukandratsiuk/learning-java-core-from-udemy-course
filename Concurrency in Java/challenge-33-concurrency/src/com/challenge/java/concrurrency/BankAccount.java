@@ -26,10 +26,12 @@ class BankAccount {
     }
 
     public void deposit(double amount) {
+        boolean status = false;
         try {
             if (lock.tryLock(1000, TimeUnit.MILLISECONDS)) {
                 try {
                     balance += amount;
+                    status = true;
                 } finally {
                     lock.unlock();
                 }
@@ -39,14 +41,16 @@ class BankAccount {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        showBalance();
+        showBalance(status);
     }
 
     public void withdraw(double amount) {
+        boolean status = false;
         try {
             if (lock.tryLock(1000, TimeUnit.MILLISECONDS)) {
                 try {
                     balance -= amount;
+                    status = true;
                 } finally {
                     lock.unlock();
                 }
@@ -56,11 +60,11 @@ class BankAccount {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        showBalance();
+        showBalance(status);
     }
 
-    public void showBalance() {
-        System.out.println(Thread.currentThread().getName() + ':' + this);
+    public void showBalance(boolean transactionStatus) {
+        System.out.println(Thread.currentThread().getName() + ':' + this + ":transactionStatus=" + transactionStatus);
     }
 
     @Override
