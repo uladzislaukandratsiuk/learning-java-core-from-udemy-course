@@ -8,13 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Runnable() -> Runnable example");
-            }
-        }).start();
-
+        new Thread(() -> System.out.println("Runnable() -> Runnable example")).start();
 
         Student bob = new Student("Bob");
         Student phil = new Student("Phil");
@@ -27,24 +21,14 @@ public class Main {
         students.add(greg);
         students.add(alex);
 
-        students.sort(new Comparator<>() {
-            @Override
-            public int compare(Student firstStudent, Student secondStudent) {
-                return firstStudent.getName().compareTo(secondStudent.getName());
-            }
-        });
+        students.sort(Comparator.comparing(Student::getName));
 
         for (Student student : students) {
             System.out.println(student.getName());
         }
 
-        String sillyString = doStringStuff(new UpperConcat() {
-            @Override
-            public String upperAndConcat(String s1, String s2) {
-                return s1.toUpperCase() + s2.toUpperCase();
-            }
-        },
-        students.get(0).getName(), students.get(1).getName());
+        UpperConcat uc = (s1, s2) -> s1.toUpperCase() +  s2.toUpperCase();
+        String sillyString = doStringStuff(uc, students.get(0).getName(), students.get(1).getName());
         System.out.println("UpperConcat() -> " + sillyString);
     }
 
