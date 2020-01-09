@@ -2,6 +2,7 @@ package com.example.predicate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Main {
 
@@ -22,13 +23,17 @@ public class Main {
         students.add(greg);
         students.add(alex);
 
-        students.forEach(student -> {
-            if (student.getCourse() > 3) {
-                System.out.println(student.getName() + " last courses student");            }
+        printStudentByCourse(students, "Last courses students:", student -> student.getCourse() > 3);
+        printStudentByCourse(students, "\nFirst courses students:", student -> student.getCourse() <= 3);
+    }
 
-            if (student.getCourse() <= 3) {
-                System.out.println(student.getName() + " first courses student");
+    public static void printStudentByCourse(List<Student> students, String courseText,
+                                            Predicate<Student> courseCondition) {
+        System.out.println(courseText);
+        for (Student student : students) {
+            if (courseCondition.test(student)) {
+                System.out.println(student.getName());
             }
-        });
+        }
     }
 }
