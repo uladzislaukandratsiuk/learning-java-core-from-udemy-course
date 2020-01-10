@@ -4,6 +4,7 @@ import com.example.predicate.Student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class Main {
 
@@ -24,14 +25,19 @@ public class Main {
         students.add(greg);
         students.add(alex);
 
-        students.forEach(student -> {
-            String firstName = student.getName().substring(0, student.getName().indexOf(' '));
-            System.out.println("First name: " + firstName);
-        });
+        Function<Student, String> getFirstName = (student ->
+                student.getName().substring(0, student.getName().indexOf(' ')));
 
-        students.forEach(student -> {
-            String lastName = student.getName().substring(student.getName().indexOf(' ') + 1);
-            System.out.println("Last name: " + lastName);
-        });
+        Function<Student, String> getLastName = (student ->
+                student.getName().substring(student.getName().indexOf(' ') + 1));
+
+        for (Student student : students) {
+            System.out.format("First name: %s, Last Name: %s.\n",
+                    getStudentName(getFirstName, student), getStudentName(getLastName, student));
+        }
+    }
+
+    public static String getStudentName(Function<Student, String> getName, Student student) {
+        return getName.apply(student);
     }
 }
