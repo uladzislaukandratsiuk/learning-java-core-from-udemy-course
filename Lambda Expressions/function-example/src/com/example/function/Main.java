@@ -4,6 +4,7 @@ import com.example.predicate.Student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Main {
@@ -25,15 +26,24 @@ public class Main {
         students.add(greg);
         students.add(alex);
 
-        Function<Student, String> getFirstName = (student ->
-                student.getName().substring(0, student.getName().indexOf(' ')));
+        Function<Student, String> getFirstName = student ->
+                student.getName().substring(0, student.getName().indexOf(' '));
 
-        Function<Student, String> getLastName = (student ->
-                student.getName().substring(student.getName().indexOf(' ') + 1));
+        Function<Student, String> getLastName = student ->
+                student.getName().substring(student.getName().indexOf(' ') + 1);
+
+        Function<Student, String> upperCase = student -> student.getName().toUpperCase();
+        Function<String, String> lastName = name -> name.substring(name.indexOf(' ') + 1);
+        Function<Student, String> chainedFunction = upperCase.andThen(lastName);
+
+        BiFunction<String, Student, String> concatCourse = (name, student) ->
+                name.concat(" course: " + student.getCourse());
 
         for (Student student : students) {
             System.out.format("First name: %s, Last Name: %s.\n",
                     getStudentName(getFirstName, student), getStudentName(getLastName, student));
+            System.out.format("Last Name upperCase: %s.\n",
+                    concatCourse.apply((chainedFunction.apply(student)), student));
         }
     }
 
