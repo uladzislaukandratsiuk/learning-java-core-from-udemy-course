@@ -1,5 +1,7 @@
 package com.challenge.lambda;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -31,6 +33,27 @@ public class Main {
 
         Supplier<String> iLoveJava = () -> "I love java";
         System.out.println(iLoveJava.get());
+
+        List<String> topNames2015 = Arrays.asList(
+                "A==============",
+                "Amelia",
+                "Olivia",
+                "emily",
+                "Isla",
+                "Ava",
+                "oliver",
+                "Jack",
+                "Charlie",
+                "harry",
+                "Jacob",
+                "W=============="
+        );
+
+        topNames2015.stream()
+                .map(name -> name.substring(0, 1).toUpperCase().concat(name.substring(1)))
+                .sorted(String::compareTo)
+                .forEach(System.out::println);
+
     }
 
     public static String everySecondCharacter(Function<String, String> function, String source){
