@@ -1,6 +1,7 @@
 package com.challenge.lambda;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Main {
 
@@ -27,6 +28,9 @@ public class Main {
         };
 
         System.out.println(everySecondCharacter(everySecondChar, "e0v1e2r3y4s5e6c7o8n9d"));
+
+        Supplier<String> iLoveJava = () -> "I love java";
+        System.out.println(iLoveJava.get());
     }
 
     public static String everySecondCharacter(Function<String, String> function, String source){
