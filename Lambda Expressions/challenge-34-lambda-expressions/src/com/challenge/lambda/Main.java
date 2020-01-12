@@ -16,7 +16,7 @@ public class Main {
 
         new Thread(runnable).start();
 
-        Function<String, String > everySecondChar = s -> {
+        Function<String, String> everySecondChar = s -> {
             StringBuilder returnValue = new StringBuilder();
             for (int i = 0; i < s.length(); i++) {
                 if (i % 2 == 0) {
@@ -26,6 +26,10 @@ public class Main {
             return returnValue.toString();
         };
 
-        System.out.println(everySecondChar.apply("e0v1e2r3y4s5e6c7o8n9d"));
+        System.out.println(everySecondCharacter(everySecondChar, "e0v1e2r3y4s5e6c7o8n9d"));
+    }
+
+    public static String everySecondCharacter(Function<String, String> function, String source){
+        return function.apply(source);
     }
 }
