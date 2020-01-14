@@ -1,6 +1,8 @@
 package com.example.regular.expressions;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -33,6 +35,31 @@ public class Main {
         regExpressions.put("\\b", "*");
 
         changeStringWithRegularExpression(hasWhitespace, regExpressions);
+
+        System.out.println("=======================================\n");
+
+        regExpressions = new HashMap<>();
+        regExpressions.put("^abcDe{3}", "++");
+        regExpressions.put("^abcDe+", "++");
+        regExpressions.put("^abcDeF*", "++");
+        regExpressions.put("^abcDe{2,5}", "++");
+        regExpressions.put("e+i*j", "++");
+
+        changeStringWithRegularExpression(alphanumeric, regExpressions);
+        System.out.println("=======================================\n");
+
+        StringBuilder htmlText = new StringBuilder("<h1>My Heading</h1>");
+
+        String goodPattern = ".*<h1>.*";
+        Pattern pattern = Pattern.compile(goodPattern);
+        Matcher matcher = pattern.matcher(htmlText);
+        System.out.println(matcher.matches());
+
+        String badPattern = "<h1>";
+        pattern = Pattern.compile(badPattern);
+        matcher = pattern.matcher(htmlText);
+        System.out.println(matcher.matches());
+
     }
 
     public static void changeStringWithRegularExpression(String source, Map<String, String> expressions) {
