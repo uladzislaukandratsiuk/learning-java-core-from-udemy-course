@@ -49,6 +49,11 @@ public class Main {
         System.out.println("=======================================\n");
 
         StringBuilder htmlText = new StringBuilder("<h1>My Heading</h1>");
+        htmlText.append("<h2>Sub-heading</h2>");
+        htmlText.append("<p>This is a paragraph about something.</p>");
+        htmlText.append("<p>This is another paragraph about something else.</p>");
+        htmlText.append("<h2>Summary</h2>");
+        htmlText.append("<p>Here is the summary.</p>");
 
         String goodPattern = ".*<h1>.*";
         Pattern pattern = Pattern.compile(goodPattern);
@@ -60,6 +65,34 @@ public class Main {
         matcher = pattern.matcher(htmlText);
         System.out.println(matcher.matches());
 
+        String h2Pattern = "<h2>";
+        pattern = Pattern.compile(h2Pattern);
+        matcher = pattern.matcher(htmlText);
+
+        matcher.reset();
+        int count = 0;
+        while(matcher.find()) {
+            count++;
+            System.out.println("Occurrence " + count + " : " + matcher.start() + " to " + matcher.end());
+        }
+
+        String h2GroupPattern = "(<h2>.*?</h2>)";
+        Pattern groupPattern = Pattern.compile(h2GroupPattern);
+        Matcher groupMatcher = groupPattern.matcher(htmlText);
+        System.out.println(groupMatcher.matches());
+
+        groupMatcher.reset();
+        while(groupMatcher.find()) {
+            System.out.println("Occurrence: " + groupMatcher.group(1));
+        }
+
+        String h2TextGroups = "(<h2>)(.+?)(</h2>)";
+        Pattern h2TextPatten = Pattern.compile(h2TextGroups);
+        Matcher h2TextMatcher = h2TextPatten.matcher(htmlText);
+
+        while(h2TextMatcher.find()) {
+            System.out.println("Occurrence: " + h2TextMatcher.group(2));
+        }
     }
 
     public static void changeStringWithRegularExpression(String source, Map<String, String> expressions) {
