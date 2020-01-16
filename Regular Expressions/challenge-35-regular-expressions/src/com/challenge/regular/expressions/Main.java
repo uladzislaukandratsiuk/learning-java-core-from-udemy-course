@@ -80,5 +80,15 @@ public class Main {
         while (ninthMatcher.find()) {
             System.out.print(ninthMatcher.group(1) + "\n");
         }
+
+        String tenthChallenge = "11111";
+        System.out.println(tenthChallenge.matches("^\\d{5}$"));
+
+        String eleventhChallenge = "11111-1111";
+        System.out.println(eleventhChallenge.matches("^\\d{5}?-\\d{4}$"));
+
+        String twelfthChallenge = "^\\d{5}(-\\d{4})?$";
+        System.out.println(tenthChallenge.matches(twelfthChallenge));
+        System.out.println(eleventhChallenge.matches(twelfthChallenge));
     }
 }
