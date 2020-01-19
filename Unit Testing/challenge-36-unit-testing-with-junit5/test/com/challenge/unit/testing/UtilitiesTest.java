@@ -21,11 +21,13 @@ class UtilitiesTest {
     }
 
     @Test
-    void shouldRemovePairs() {
-        assertEquals("", utilities.removePairs(""));
+    void shouldReturnSource() {
         assertEquals("A", utilities.removePairs("A"));
+    }
+
+    @Test
+    void shouldRemovePairs() {
         assertEquals("ABCDEF", utilities.removePairs("AAABBCDEEFFF"));
-        assertEquals("ABCABDEF", utilities.removePairs("AABCABBDEEF"));
     }
 
     @Test
