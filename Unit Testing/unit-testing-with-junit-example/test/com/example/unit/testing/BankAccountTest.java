@@ -28,10 +28,8 @@ class BankAccountTest {
 
     @Test
     void withdraw_notBranch() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            double balance = bankAccount.withdraw(550.00, false);
-            assertEquals(350.00, balance, 0);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> bankAccount.withdraw(550.00, false));
 
         String expectedMessage = "You cannot withdraw more than 500.00 at an ATM";
         String actualMessage = exception.getMessage();
