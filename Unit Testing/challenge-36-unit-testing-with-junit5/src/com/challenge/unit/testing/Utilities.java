@@ -36,10 +36,12 @@ public class Utilities {
         StringBuilder sb = new StringBuilder();
         char[] string = source.toCharArray();
 
-        for (int i = 0; i < string.length; i++) {
-            if (string[i] != string[i++]) {
-                sb.append(string[i]);
-            }
+        sb.append(string[0]);
+
+        for (int i = 1; i < string.length; i++) {
+                if (string[--i] != string[++i]) {
+                    sb.append(string[i]);
+                }
         }
 
         return sb.toString();
