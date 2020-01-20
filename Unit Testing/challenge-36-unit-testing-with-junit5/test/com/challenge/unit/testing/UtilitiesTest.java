@@ -7,28 +7,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UtilitiesTest {
 
-    public static final int SECOND_CHAR = 2;
-    public static final int SIXTH_CHAR = 6;
+    private static final int SECOND_CHAR = 2;
+    private static final int SIXTH_CHAR = 6;
+    private static final String ODD_LENGTH_STRING = "Odd String!";
+    private static final String EVEN_LENGTH_STRING = "Even String!";
+    private static final String SOURCE_STRING = "A";
+    private static final String STRING_WITHOUT_PAIRS = "ABCDEF";
+    private static final String STRING_WITH_PAIRS = "AAABBCDEEFFF";
 
     private Utilities utilities;
-    private char[] source;
-    private char[] result;
+    private char[] sourceArray;
+    private char[] resultArray;
 
     @BeforeEach
     void setup() {
         utilities = new Utilities();
-        source = new char[] {'h', 'e', 'l', 'l', 'o'};
-        result = new char[] {'e', 'l'};
+        sourceArray = new char[] {'h', 'e', 'l', 'l', 'o'};
+        resultArray = new char[] {'e', 'l'};
     }
 
     @Test
     void shouldReturnEveryNthChar() {
-        assertArrayEquals(result, utilities.everyNthChar(source, SECOND_CHAR));
+        assertArrayEquals(resultArray, utilities.everyNthChar(sourceArray, SECOND_CHAR));
     }
 
     @Test
     void shouldReturnSourceForEveryNthChar() {
-        assertArrayEquals(source, utilities.everyNthChar(source, SIXTH_CHAR));
+        assertArrayEquals(sourceArray, utilities.everyNthChar(sourceArray, SIXTH_CHAR));
     }
 
     @Test
@@ -43,12 +48,12 @@ class UtilitiesTest {
 
     @Test
     void shouldReturnSourceForRemovePairs() {
-        assertEquals("A", utilities.removePairs("A"));
+        assertEquals(SOURCE_STRING, utilities.removePairs(SOURCE_STRING));
     }
 
     @Test
     void shouldRemovePairs() {
-        assertEquals("ABCDEF", utilities.removePairs("AAABBCDEEFFF"));
+        assertEquals(STRING_WITHOUT_PAIRS, utilities.removePairs(STRING_WITH_PAIRS));
     }
 
     @Test
@@ -57,7 +62,13 @@ class UtilitiesTest {
     }
 
     @Test
-    void nullIfOddLength() {
-        fail("Test not implemented");
+    void shouldReturnNullIfOddLength() {
+        assertNull(utilities.nullIfOddLength(ODD_LENGTH_STRING));
+        assertNotNull(utilities.nullIfOddLength(EVEN_LENGTH_STRING));
+    }
+
+    @Test
+    void shouldReturnSourceIfEvenLength() {
+        assertEquals(EVEN_LENGTH_STRING, utilities.nullIfOddLength(EVEN_LENGTH_STRING));
     }
 }
