@@ -14,6 +14,9 @@ class UtilitiesTest {
     private static final String SOURCE_STRING = "A";
     private static final String STRING_WITHOUT_PAIRS = "ABCDEF";
     private static final String STRING_WITH_PAIRS = "AAABBCDEEFFF";
+    private static final int ARGUMENT_A = 10;
+    private static final int ARGUMENT_B = 5;
+    private static final int CONVERT_OUTPUT = 300;
 
     private Utilities utilities;
     private char[] sourceArray;
@@ -57,8 +60,8 @@ class UtilitiesTest {
     }
 
     @Test
-    void converter() {
-        fail("Test not implemented");
+    void shouldConvert() {
+        assertEquals(CONVERT_OUTPUT, utilities.converter(ARGUMENT_A, ARGUMENT_B));
     }
 
     @Test
