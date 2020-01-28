@@ -1,8 +1,8 @@
 package com.example.working.with.db.model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyDataSource {
 
@@ -32,7 +32,7 @@ public class MyDataSource {
         try {
             conn = DriverManager.getConnection(CONNECTION_URL);
             return true;
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
             return false;
         }
@@ -40,11 +40,31 @@ public class MyDataSource {
 
     public void close() {
         try {
-            if(conn != null) {
+            if (conn != null) {
                 conn.close();
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Couldn't close connection: " + e.getMessage());
+        }
+    }
+
+    public List<Artist> queryArtists() {
+
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_ARTISTS)) {
+
+            List<Artist> artists = new ArrayList<>();
+            while (resultSet.next()) {
+                Artist artist = new Artist(resultSet.getInt(COLUMN_ARTIST_ID),
+                        resultSet.getString(COLUMN_ARTIST_NAME));
+                artists.add(artist);
+            }
+
+            return artists;
+
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
         }
     }
 }
