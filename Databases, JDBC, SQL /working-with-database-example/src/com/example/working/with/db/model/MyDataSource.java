@@ -56,6 +56,20 @@ public class MyDataSource {
     public static final String ORDER_ALBUMS_BY_ARTIST =
             " ORDER BY " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " COLLATE NOCASE ";
 
+    public static final String QUERY_ARTIST_FOR_SONG_START =
+            "SELECT " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " +
+                    TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + ", " +
+                    TABLE_SONGS + "." + COLUMN_SONG_TRACK + " FROM " + TABLE_SONGS +
+                    " INNER JOIN " + TABLE_ALBUMS + " ON " +
+                    TABLE_SONGS + "." + COLUMN_SONG_ALBUM + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ID +
+                    " INNER JOIN " + TABLE_ARTISTS + " ON " +
+                    TABLE_ALBUMS + "." + COLUMN_ALBUM_ARTIST + " = " + TABLE_ARTISTS + "." + COLUMN_ARTIST_ID +
+                    " WHERE " + TABLE_SONGS + "." + COLUMN_SONG_TITLE + " = \"";
+
+    public static final String ORDER_ARTIST_SONG =
+            " ORDER BY " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " +
+                    TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " COLLATE NOCASE ";
+
     private Connection conn;
 
     public boolean open() {
@@ -80,16 +94,7 @@ public class MyDataSource {
 
     public List<Artist> queryArtists(int sortOrder) {
 
-        StringBuilder sb = new StringBuilder(QUERY_ARTIST);
-
-        if (sortOrder != ORDER_BY_NONE) {
-            sb.append(ORDER_ARTIST_BY_NAME);
-            if (sortOrder == ORDER_BY_DESC) {
-                sb.append("DESC");
-            } else {
-                sb.append("ASC");
-            }
-        }
+        StringBuilder sb = new StringBuilder(sortForQuery(QUERY_ARTIST, ORDER_ARTIST_BY_NAME, sortOrder));
 
         System.out.println("\nQuery Artists statement = \n" + sb.toString() + "\n");
 
@@ -113,18 +118,9 @@ public class MyDataSource {
 
     public List<String> queryAlbumsForArtist(String artistName, int sortOrder) {
 
-        StringBuilder sb = new StringBuilder(QUERY_ALBUMS_BY_ARTIST_START);
-        sb.append(artistName);
-        sb.append("\"");
-
-        if (sortOrder != ORDER_BY_NONE) {
-            sb.append(ORDER_ALBUMS_BY_ARTIST);
-            if (sortOrder == ORDER_BY_DESC) {
-                sb.append("DESC");
-            } else {
-                sb.append("ASC");
-            }
-        }
+        StringBuilder sb =
+                new StringBuilder(sortForQuery((QUERY_ALBUMS_BY_ARTIST_START + artistName + "\""),
+                        ORDER_ALBUMS_BY_ARTIST, sortOrder));
 
         System.out.println("\nQuery Albums for Artist statement =  \n" + sb.toString() + "\n");
 
@@ -142,5 +138,50 @@ public class MyDataSource {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
+    }
+
+    public List<ArtistSong> queryArtistsBySong(String songName, int sortOrder) {
+
+        StringBuilder sb =
+                new StringBuilder(sortForQuery((QUERY_ARTIST_FOR_SONG_START + songName + "\""),
+                        ORDER_ALBUMS_BY_ARTIST, sortOrder));
+
+        System.out.println("\nQuery Artists by Song statement =  \n" + sb.toString() + "\n");
+
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(sb.toString())) {
+
+            List<ArtistSong> artistSongs = new ArrayList<>();
+
+            while (results.next()) {
+                ArtistSong artistSong = new ArtistSong(
+                        results.getString(1),
+                        results.getString(2),
+                        results.getInt(3));
+                artistSongs.add(artistSong);
+            }
+
+            return artistSongs;
+
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private StringBuilder sortForQuery(String statement, String sortStatement, int sortOrder) {
+
+        StringBuilder sb = new StringBuilder(statement);
+
+        if (sortOrder != ORDER_BY_NONE) {
+            sb.append(sortStatement);
+            if (sortOrder == ORDER_BY_DESC) {
+                sb.append("DESC");
+            } else {
+                sb.append("ASC");
+            }
+        }
+
+        return sb;
     }
 }
