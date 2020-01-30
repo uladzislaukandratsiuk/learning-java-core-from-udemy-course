@@ -86,15 +86,24 @@ public class MyDataSource {
             TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + ", " +
             TABLE_SONGS + "." + COLUMN_SONG_TRACK;
 
-    public static final String QUERY_VIEW_SONG_INFO =  "SELECT " + COLUMN_ARTIST_NAME + ", " +
+    public static final String QUERY_VIEW_SONG_INFO = "SELECT " + COLUMN_ARTIST_NAME + ", " +
             COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK + " FROM " + TABLE_ARTIST_SONG_VIEW +
             " WHERE " + COLUMN_SONG_TITLE + " = \"";
 
+    public static final String QUERY_VIEW_SONG_INFO_PREP = "SELECT " + COLUMN_ARTIST_NAME + ", " +
+            COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK + " FROM " + TABLE_ARTIST_SONG_VIEW +
+            " WHERE " + COLUMN_SONG_TITLE + " = ?";
+
+    // SELECT name, album, track FROM artist_list WHERE title = ?
+
     private Connection conn;
+
+    private PreparedStatement preparedStatement;
 
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_URL);
+            preparedStatement = conn.prepareStatement(QUERY_VIEW_SONG_INFO_PREP);
             return true;
         } catch (SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
@@ -104,6 +113,9 @@ public class MyDataSource {
 
     public void close() {
         try {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
             if (conn != null) {
                 conn.close();
             }
@@ -181,7 +193,7 @@ public class MyDataSource {
 
     public List<ArtistSong> querySongInfoView(String title) {
 
-        if (!createViewForSongArtists()) {
+        if (createViewForSongArtists()) {
             return null;
         }
 
@@ -196,7 +208,27 @@ public class MyDataSource {
 
             return getArtistSongFromResultSet(results);
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<ArtistSong> querySongInfoViewPreparedStatement(String title) {
+
+        if (createViewForSongArtists()) {
+            return null;
+        }
+
+        System.out.println("\nQuery Song info from view with prep =  \n" + QUERY_VIEW_SONG_INFO_PREP + "\n");
+
+        try {
+            preparedStatement.setString(1, title);
+            ResultSet results = preparedStatement.executeQuery();
+
+            return getArtistSongFromResultSet(results);
+
+        } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
@@ -219,14 +251,14 @@ public class MyDataSource {
 
     private boolean createViewForSongArtists() {
 
-        try(Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
 
             statement.execute(CREATE_ARTIST_FOR_SONG_VIEW);
-            return true;
-
-        } catch(SQLException e) {
-            System.out.println("Create View failed: " + e.getMessage());
             return false;
+
+        } catch (SQLException e) {
+            System.out.println("Create View failed: " + e.getMessage());
+            return true;
         }
     }
 

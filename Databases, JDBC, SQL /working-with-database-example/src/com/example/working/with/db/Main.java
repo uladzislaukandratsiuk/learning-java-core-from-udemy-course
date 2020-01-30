@@ -48,7 +48,20 @@ public class Main {
                     " Track = " + artist.getTrack());
         }
 
-        artistSongs = dataSource.querySongInfoView("She's On Fire");
+        artistSongs = dataSource.querySongInfoView("She's On Fire\" or 1=1 or \"");
+
+        if (artistSongs.isEmpty()) {
+            System.out.println("Couldn't find the artist for the song");
+            return;
+        }
+
+        for (ArtistSong artist : artistSongs) {
+            System.out.println("FROM VIEW - Artist name = " + artist.getArtistName() +
+                    " Album name = " + artist.getAlbumName() +
+                    " Track = " + artist.getTrack());
+        }
+
+        artistSongs = dataSource.querySongInfoViewPreparedStatement("She's On Fire\" or 1=1 \"");
 
         if (artistSongs.isEmpty()) {
             System.out.println("Couldn't find the artist for the song");
