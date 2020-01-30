@@ -70,6 +70,26 @@ public class MyDataSource {
             " ORDER BY " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " +
                     TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " COLLATE NOCASE ";
 
+    public static final String TABLE_ARTIST_SONG_VIEW = "artist_list";
+
+    public static final String CREATE_ARTIST_FOR_SONG_VIEW = "CREATE VIEW IF NOT EXISTS " +
+            TABLE_ARTIST_SONG_VIEW + " AS SELECT " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " +
+            TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " AS " + COLUMN_SONG_ALBUM + ", " +
+            TABLE_SONGS + "." + COLUMN_SONG_TRACK + ", " + TABLE_SONGS + "." + COLUMN_SONG_TITLE +
+            " FROM " + TABLE_SONGS +
+            " INNER JOIN " + TABLE_ALBUMS + " ON " + TABLE_SONGS +
+            "." + COLUMN_SONG_ALBUM + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ID +
+            " INNER JOIN " + TABLE_ARTISTS + " ON " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ARTIST +
+            " = " + TABLE_ARTISTS + "." + COLUMN_ARTIST_ID +
+            " ORDER BY " +
+            TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " +
+            TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + ", " +
+            TABLE_SONGS + "." + COLUMN_SONG_TRACK;
+
+    public static final String QUERY_VIEW_SONG_INFO =  "SELECT " + COLUMN_ARTIST_NAME + ", " +
+            COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK + " FROM " + TABLE_ARTIST_SONG_VIEW +
+            " WHERE " + COLUMN_SONG_TITLE + " = \"";
+
     private Connection conn;
 
     public boolean open() {
@@ -144,24 +164,14 @@ public class MyDataSource {
 
         StringBuilder sb =
                 new StringBuilder(sortForQuery((QUERY_ARTIST_FOR_SONG_START + songName + "\""),
-                        ORDER_ALBUMS_BY_ARTIST, sortOrder));
+                        ORDER_ARTIST_SONG, sortOrder));
 
         System.out.println("\nQuery Artists by Song statement =  \n" + sb.toString() + "\n");
 
         try (Statement statement = conn.createStatement();
              ResultSet results = statement.executeQuery(sb.toString())) {
 
-            List<ArtistSong> artistSongs = new ArrayList<>();
-
-            while (results.next()) {
-                ArtistSong artistSong = new ArtistSong(
-                        results.getString(1),
-                        results.getString(2),
-                        results.getInt(3));
-                artistSongs.add(artistSong);
-            }
-
-            return artistSongs;
+            return getArtistSongFromResultSet(results);
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
@@ -169,12 +179,63 @@ public class MyDataSource {
         }
     }
 
-    private StringBuilder sortForQuery(String statement, String sortStatement, int sortOrder) {
+    public List<ArtistSong> querySongInfoView(String title) {
 
-        StringBuilder sb = new StringBuilder(statement);
+        if (!createViewForSongArtists()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder(QUERY_VIEW_SONG_INFO);
+        sb.append(title);
+        sb.append("\"");
+
+        System.out.println("\nQuery Song info from view =  \n" + sb.toString() + "\n");
+
+        try (Statement statement = conn.createStatement();
+             ResultSet results = statement.executeQuery(sb.toString())) {
+
+            return getArtistSongFromResultSet(results);
+
+        } catch(SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private List<ArtistSong> getArtistSongFromResultSet(ResultSet results) throws SQLException {
+
+        List<ArtistSong> artistSongs = new ArrayList<>();
+
+        while (results.next()) {
+            ArtistSong artistSong = new ArtistSong(
+                    results.getString(1),
+                    results.getString(2),
+                    results.getInt(3));
+            artistSongs.add(artistSong);
+        }
+
+        return artistSongs;
+    }
+
+    private boolean createViewForSongArtists() {
+
+        try(Statement statement = conn.createStatement()) {
+
+            statement.execute(CREATE_ARTIST_FOR_SONG_VIEW);
+            return true;
+
+        } catch(SQLException e) {
+            System.out.println("Create View failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private StringBuilder sortForQuery(String query, String sortQuery, int sortOrder) {
+
+        StringBuilder sb = new StringBuilder(query);
 
         if (sortOrder != ORDER_BY_NONE) {
-            sb.append(sortStatement);
+            sb.append(sortQuery);
             if (sortOrder == ORDER_BY_DESC) {
                 sb.append("DESC");
             } else {

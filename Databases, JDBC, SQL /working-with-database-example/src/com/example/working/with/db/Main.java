@@ -18,7 +18,7 @@ public class Main {
         }
 
         List<Artist> artists = dataSource.queryArtists(MyDataSource.ORDER_BY_ASC);
-        if (artists == null) {
+        if (artists.isEmpty()) {
             System.out.println("No artists!");
             return;
         }
@@ -37,13 +37,26 @@ public class Main {
         List<ArtistSong> artistSongs =
                 dataSource.queryArtistsBySong("The Unforgiven", MyDataSource.ORDER_BY_ASC);
 
-        if (artistSongs == null) {
+        if (artistSongs.isEmpty()) {
             System.out.println("Couldn't find the artist for the song");
             return;
         }
 
         for (ArtistSong artist : artistSongs) {
             System.out.println("Artist name = " + artist.getArtistName() +
+                    " Album name = " + artist.getAlbumName() +
+                    " Track = " + artist.getTrack());
+        }
+
+        artistSongs = dataSource.querySongInfoView("She's On Fire");
+
+        if (artistSongs.isEmpty()) {
+            System.out.println("Couldn't find the artist for the song");
+            return;
+        }
+
+        for (ArtistSong artist : artistSongs) {
+            System.out.println("FROM VIEW - Artist name = " + artist.getArtistName() +
                     " Album name = " + artist.getAlbumName() +
                     " Track = " + artist.getTrack());
         }
