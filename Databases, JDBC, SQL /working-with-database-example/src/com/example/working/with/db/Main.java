@@ -61,6 +61,8 @@ public class Main {
                     " Track = " + artist.getTrack());
         }
 
+        dataSource.insertSong("Bird Dog", "Everly Brothers", "All-Time Greatest Hits", 1);
+
         artistSongs = dataSource.querySongInfoViewPreparedStatement("She's On Fire\" or 1=1 \"");
 
         if (artistSongs.isEmpty()) {
