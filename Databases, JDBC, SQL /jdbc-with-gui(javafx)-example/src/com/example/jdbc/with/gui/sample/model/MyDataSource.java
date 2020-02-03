@@ -129,6 +129,11 @@ public class MyDataSource {
 
             List<Artist> artists = new ArrayList<>();
             while (resultSet.next()) {
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    System.out.println("Interrupted: " + e.getMessage());
+                }
                 Artist artist = new Artist(resultSet.getInt(INDEX_ARTIST_ID),
                         resultSet.getString(INDEX_ARTIST_NAME));
                 artists.add(artist);

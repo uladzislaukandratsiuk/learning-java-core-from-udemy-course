@@ -27,7 +27,7 @@
             <BorderPane.margin>
                 <Insets right="10.0"/>
             </BorderPane.margin>
-            <Button maxWidth="Infinity" mnemonicParsing="false" text="List Artists"/>
+            <Button onAction="#listArtist" maxWidth="Infinity" mnemonicParsing="false" text="List Artists"/>
             <Button onAction="#listAlbumsForArtist" maxWidth="Infinity" mnemonicParsing="false"
                     text="Show Albums (artist)"/>
             <Button maxWidth="Infinity" mnemonicParsing="false" text="Update Artist"/>
@@ -35,7 +35,7 @@
     </right>
     <bottom>
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <ProgressBar visible="false" prefWidth="200.0" progress="0.0">
+            <ProgressBar fx:id="progressBar" visible="false" prefWidth="200.0" progress="0.0">
                 <HBox.margin>
                     <Insets left="50.0"/>
                 </HBox.margin>
