@@ -1,20 +1,23 @@
 package com.example.jdbc.with.gui.sample.model;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 public class Artist {
 
-    private int id;
-    private String name;
+    private SimpleIntegerProperty id;
+    private SimpleStringProperty name;
 
     public Artist(int id, String name) {
-        this.id = id;
-        this.name = name;
+        this.id = new SimpleIntegerProperty(id);
+        this.name = new SimpleStringProperty(name);
     }
 
     public int getId() {
-        return id;
+        return id.get();
     }
 
     public String getName() {
-        return name;
+        return name.get();
     }
 }
