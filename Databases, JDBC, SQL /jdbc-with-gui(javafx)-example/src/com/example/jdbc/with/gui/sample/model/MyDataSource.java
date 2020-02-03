@@ -53,6 +53,9 @@ public class MyDataSource {
     public static final String QUERY_ALBUM_TABLE = "SELECT " + COLUMN_ALBUM_ID + " FROM " +
             TABLE_ALBUMS + " WHERE " + COLUMN_ALBUM_NAME + " = ?";
 
+    public static final String QUERY_ALBUMS_BY_ARTIST_ID = "SELECT * FROM " + TABLE_ALBUMS +
+            " WHERE " + COLUMN_ALBUM_ARTIST + " = ? ORDER BY " + COLUMN_ALBUM_NAME + " COLLATE NOCASE";
+
     private Connection conn;
 
     private PreparedStatement queryArtist;
@@ -60,6 +63,7 @@ public class MyDataSource {
 
     private PreparedStatement insertIntoArtists;
     private PreparedStatement insertIntoAlbums;
+    private PreparedStatement queryAlbumsByArtistId;
 
     private static MyDataSource instance = new MyDataSource();
 
@@ -77,6 +81,7 @@ public class MyDataSource {
 
             queryArtist = conn.prepareStatement(QUERY_ARTIST_TABLE);
             queryAlbum = conn.prepareStatement(QUERY_ALBUM_TABLE);
+            queryAlbumsByArtistId = conn.prepareStatement(QUERY_ALBUMS_BY_ARTIST_ID);
 
             insertIntoArtists = conn.prepareStatement(INSERT_ARTIST, Statement.RETURN_GENERATED_KEYS);
             insertIntoAlbums = conn.prepareStatement(INSERT_ALBUMS, Statement.RETURN_GENERATED_KEYS);
@@ -95,6 +100,9 @@ public class MyDataSource {
             }
             if (queryAlbum != null) {
                 queryAlbum.close();
+            }
+            if (queryAlbumsByArtistId != null) {
+                queryAlbumsByArtistId.close();
             }
             if (insertIntoArtists != null) {
                 insertIntoArtists.close();
@@ -128,6 +136,27 @@ public class MyDataSource {
 
             return artists;
 
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Album> queryAlbumsForArtistId(int id) {
+        try {
+            queryAlbumsByArtistId.setInt(1, id);
+            ResultSet results = queryAlbumsByArtistId.executeQuery();
+
+            List<Album> albums = new ArrayList<>();
+            while (results.next()) {
+                Album album = new Album(
+                        results.getInt(1),
+                        results.getString(2),
+                        id);
+                albums.add(album);
+            }
+
+            return albums;
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;

@@ -28,7 +28,8 @@
                 <Insets right="10.0"/>
             </BorderPane.margin>
             <Button maxWidth="Infinity" mnemonicParsing="false" text="List Artists"/>
-            <Button maxWidth="Infinity" mnemonicParsing="false" text="Show Albums (artist)"/>
+            <Button onAction="#listAlbumsForArtist" maxWidth="Infinity" mnemonicParsing="false"
+                    text="Show Albums (artist)"/>
             <Button maxWidth="Infinity" mnemonicParsing="false" text="Update Artist"/>
         </VBox>
     </right>
