@@ -41,12 +41,6 @@ public class MyDataSource {
     public static final String ORDER_ALBUMS_BY_ARTIST =
             " ORDER BY " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " COLLATE NOCASE ";
 
-    public static final String INSERT_ARTIST = "INSERT INTO " + TABLE_ARTISTS +
-            "(" + COLUMN_ARTIST_NAME + ") VALUES(?)";
-
-    public static final String INSERT_ALBUMS = "INSERT INTO " + TABLE_ALBUMS +
-            "(" + COLUMN_ALBUM_NAME + ", " + COLUMN_ALBUM_ARTIST + ") VALUES(?, ?)";
-
     public static final String QUERY_ARTIST_TABLE = "SELECT " + COLUMN_ARTIST_ID + " FROM " +
             TABLE_ARTISTS + " WHERE " + COLUMN_ARTIST_NAME + " = ?";
 
@@ -61,8 +55,6 @@ public class MyDataSource {
     private PreparedStatement queryArtist;
     private PreparedStatement queryAlbum;
 
-    private PreparedStatement insertIntoArtists;
-    private PreparedStatement insertIntoAlbums;
     private PreparedStatement queryAlbumsByArtistId;
 
     private static MyDataSource instance = new MyDataSource();
@@ -83,9 +75,6 @@ public class MyDataSource {
             queryAlbum = conn.prepareStatement(QUERY_ALBUM_TABLE);
             queryAlbumsByArtistId = conn.prepareStatement(QUERY_ALBUMS_BY_ARTIST_ID);
 
-            insertIntoArtists = conn.prepareStatement(INSERT_ARTIST, Statement.RETURN_GENERATED_KEYS);
-            insertIntoAlbums = conn.prepareStatement(INSERT_ALBUMS, Statement.RETURN_GENERATED_KEYS);
-
             return true;
         } catch (SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
@@ -103,12 +92,6 @@ public class MyDataSource {
             }
             if (queryAlbumsByArtistId != null) {
                 queryAlbumsByArtistId.close();
-            }
-            if (insertIntoArtists != null) {
-                insertIntoArtists.close();
-            }
-            if (insertIntoAlbums != null) {
-                insertIntoAlbums.close();
             }
             if (conn != null) {
                 conn.close();
@@ -206,55 +189,5 @@ public class MyDataSource {
         }
 
         return sb;
-    }
-
-    private int insertArtist(String name) throws SQLException {
-
-        queryArtist.setString(1, name);
-        ResultSet results = queryArtist.executeQuery();
-        if (results.next()) {
-            return results.getInt(1);
-        } else {
-            // Insert the artist
-            insertIntoArtists.setString(1, name);
-
-            int affectedRows = insertIntoArtists.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Couldn't insert artist!");
-            }
-
-            ResultSet generatedKeys = insertIntoArtists.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return generatedKeys.getInt(1);
-            } else {
-                throw new SQLException("Couldn't get _id for artist");
-            }
-        }
-    }
-
-    private int insertAlbum(String name, int artistId) throws SQLException {
-
-        queryAlbum.setString(1, name);
-        ResultSet results = queryAlbum.executeQuery();
-        if (results.next()) {
-            return results.getInt(1);
-        } else {
-            // Insert the album
-            insertIntoAlbums.setString(1, name);
-            insertIntoAlbums.setInt(2, artistId);
-            int affectedRows = insertIntoAlbums.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Couldn't insert album!");
-            }
-
-            ResultSet generatedKeys = insertIntoAlbums.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                return generatedKeys.getInt(1);
-            } else {
-                throw new SQLException("Couldn't get _id for album");
-            }
-        }
     }
 }
