@@ -22,6 +22,7 @@ public class Main {
 
             if (responseCode != 200) {
                 System.out.println("Error reading web page");
+                System.out.println(connection.getResponseMessage());
                 return;
             }
 

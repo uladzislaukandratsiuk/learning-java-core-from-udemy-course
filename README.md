@@ -5,10 +5,12 @@
         https://www.udemy.com/course/java-the-complete-java-developer-course/
         
    ### Prerequisites
-   
-            install JUnit5.4
-               
-            install sqlite-jdbc-3.30.1
             
-            install DB Browser for SQLite
+            install httpcomponents-client-4.5.11 (Java Networking)
+            
+            install JUnit5.4 for (Unit Testing)
+               
+            install sqlite-jdbc-3.30.1 for (Databese, JDBC, SQL)
+            
+            install DB Browser SQLite for (Databese, JDBC, SQL)
                  
